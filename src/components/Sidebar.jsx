@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers, faHome, faList } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUsers,
+  faHome,
+  faList,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation } from "react-router-dom";
 import React from "react";
+import Cookies from "js-cookie";
 
 const menuItems = [
   { name: "Home", path: "/home", icon: faHome },
@@ -35,7 +41,14 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [openSubmenu, setOpenSubmenu] = useState(true);
   const location = useLocation();
+  const [userName, setUserName] = useState("");
 
+  useEffect(() => {
+    const storedName = Cookies.get("username");
+    if (storedName) {
+      setUserName(storedName);
+    }
+  });
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleSubmenu = (menu) =>
     setOpenSubmenu(openSubmenu === menu ? null : menu);
@@ -52,7 +65,7 @@ const Sidebar = () => {
           <img
             src="/company-logo.png"
             alt="Logo"
-            className={`h-14 transition-all duration-300 ${
+            className={`h-14 transition-all duration-300  ${
               isOpen ? "w-16" : "w-24"
             }`}
           />
@@ -61,7 +74,11 @@ const Sidebar = () => {
           )}
         </div>
         <button onClick={toggleSidebar} className="relative -right-7 transform">
-          <img src="/expand-icon.svg" alt="expand" className="w-8 h-8" />
+          <img
+            src="/expand-icon.svg"
+            alt="expand"
+            className={` cursor-pointer  ${isOpen ? "w-8" : "w-20"}`}
+          />
         </button>
       </div>
 
@@ -125,13 +142,20 @@ const Sidebar = () => {
       </nav>
 
       {/* Footer */}
-      <div className="mt-auto p-4 border-t flex items-center gap-3 bg-gray-100">
-        <img
-          src="https://via.placeholder.com/40"
-          alt="User"
-          className="w-10 h-10 rounded-full"
-        />
-        {isOpen && <span className="font-medium">Johnathan</span>}
+      <div className="mt-auto py-4 px-2 border-t flex items-center gap-3">
+        <FontAwesomeIcon icon={faUser} className="border-1 p-2 rounded-full" />
+        {isOpen && (
+          <div className="flex flex-col">
+            <span className="text-gray-500 font-medium">Welcome back 👋</span>
+            <span className="font-semibold text-black">
+              {userName ? userName : "Guest"}
+            </span>
+          </div>
+        )}
+        {/* <FontAwesomeIcon
+          icon={faChevronRight}
+          className="text-gray-500 ml-auto"
+        /> */}
       </div>
     </div>
   );
